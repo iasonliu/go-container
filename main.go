@@ -50,7 +50,12 @@ func child() {
 	must(syscall.Chroot("/home/vagrant/ubuntufs"))
 	must(os.Chdir("/"))
 
+	// mounts proc to using ps list container process IDs
+	must(syscall.Mount("proc", "proc", "proc", 0, ""))
+
 	must(cmd.Run())
+	// unmount
+	must(syscall.Unmount("proc", 0))
 }
 
 func must(err error) {
