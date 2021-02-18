@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strconv"
 	"syscall"
 )
 
@@ -47,7 +50,7 @@ func child() {
 	// setting hostname in namespace
 	must(syscall.Sethostname([]byte("container")))
 	// chroot
-	must(syscall.Chroot("/home/vagrant/ubuntufs"))
+	must(syscall.Chroot("/home/user1/ubuntufs"))
 	must(os.Chdir("/"))
 
 	// mounts proc to using ps list container process IDs
@@ -59,6 +62,21 @@ func child() {
 	// unmount
 	must(syscall.Unmount("proc", 0))
 	must(syscall.Unmount("mytemp", 0))
+}
+
+// setting up cgroup
+
+func cg() {
+	cgroups := "/sys/fs/cgroup/"
+
+	mem := filepath.Join(cgroups, "memory")
+	os.Mkdir(filepath.Join(mem, "user1"), 0755)
+	must(ioutil.WriteFile(filepath.Join(mem, "user1/memory.limit_in_bytes"), []byte("999424"), 0700))
+	must(ioutil.WriteFile(filepath.Join(mem, "user1/memory.memsw.limit_in_bytes"), []byte("999424"), 0700))
+	must(ioutil.WriteFile(filepath.Join(mem, "user1/memory.ontify_on_release"), []byte("1"), 0700))
+
+	pid := strconv.Itoa(os.Getpid())
+	must(ioutil.WriteFile(filepath.Join(mem, "user1/cgroup.procs"), []byte(pid), 0700))
 }
 
 func must(err error) {
