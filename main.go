@@ -41,6 +41,8 @@ func run() {
 
 func child() {
 	fmt.Printf("Running %v\n", os.Args[2:])
+	//  cgroup
+	cg()
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin = os.Stdin
@@ -65,7 +67,6 @@ func child() {
 }
 
 // setting up cgroup
-
 func cg() {
 	cgroups := "/sys/fs/cgroup/"
 
