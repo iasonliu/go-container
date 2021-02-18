@@ -33,11 +33,6 @@ func run() {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS,
 	}
-
-	// chroot
-	must(syscall.Chroot("/home/vagrant/ubuntufs"))
-	must(os.Chdir("/"))
-
 	must(cmd.Run())
 }
 
@@ -51,6 +46,9 @@ func child() {
 
 	// setting hostname in namespace
 	must(syscall.Sethostname([]byte("container")))
+	// chroot
+	must(syscall.Chroot("/home/vagrant/ubuntufs"))
+	must(os.Chdir("/"))
 
 	must(cmd.Run())
 }
