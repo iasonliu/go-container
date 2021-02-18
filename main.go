@@ -31,7 +31,7 @@ func run() {
 	// "go.toolsEnvVars": {"GOOS" : "linux"} only on Linux
 	// create Namespace in Go
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags: syscall.CLONE_NEWUTS,
+		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
 	}
 	must(cmd.Run())
 }
@@ -52,10 +52,13 @@ func child() {
 
 	// mounts proc to using ps list container process IDs
 	must(syscall.Mount("proc", "proc", "proc", 0, ""))
+	// mounts tmpfs
+	must(syscall.Mount("something", "mytemp", "tmpfs", 0, ""))
 
 	must(cmd.Run())
 	// unmount
 	must(syscall.Unmount("proc", 0))
+	must(syscall.Unmount("mytemp", 0))
 }
 
 func must(err error) {
