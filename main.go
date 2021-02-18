@@ -34,6 +34,10 @@ func run() {
 		Cloneflags: syscall.CLONE_NEWUTS,
 	}
 
+	// chroot
+	must(syscall.Chroot("/home/vagrant/ubuntufs"))
+	must(os.Chdir("/"))
+
 	must(cmd.Run())
 }
 
