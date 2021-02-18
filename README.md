@@ -50,3 +50,15 @@ ls /sys/fs/cgroup/memory/docker
 
 - `/sys/fs/cgroups/memory/myCgroup/childCgroup`
     - Inherits settings from parent(myCgroup)
+
+# Rootless containers
+don't need admin privileges to run a container engine
+
+- Containerized Linux Processes without needing root privilges
+    - Uses `CLONE_NEWUSER`
+
+- Many of the usual container benefits
+    - Isolated dependenciens
+    - Container images
+
+- No cgroup support
